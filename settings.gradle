@@ -1,1 +1,15 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'parchment'
+            url = 'https://maven.parchmentmc.org'
+        }
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name='portality'
