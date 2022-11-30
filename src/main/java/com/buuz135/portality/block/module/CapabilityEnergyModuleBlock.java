@@ -24,43 +24,47 @@
 package com.buuz135.portality.block.module;
 
 import com.buuz135.portality.tile.EnergyModuleTile;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
+import team.reborn.energy.api.EnergyStorage;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CapabilityEnergyModuleBlock extends CapabilityModuleBlock<IEnergyStorage, EnergyModuleTile> {
+public class CapabilityEnergyModuleBlock extends CapabilityModuleBlock<EnergyStorage, EnergyModuleTile> {
 
     public CapabilityEnergyModuleBlock() {
         super("module_energy", EnergyModuleTile.class);
     }
 
     @Override
-    public Capability<IEnergyStorage> getCapability() {
-        return CapabilityEnergy.ENERGY;
+    public BlockApiLookup<EnergyStorage, Direction> getCapability() {
+        return EnergyStorage.SIDED;
     }
 
     @Override
     void internalWork(Level current, BlockPos myself, Level otherWorld, List<BlockPos> compatibleBlockPos) {
-        current.getBlockEntity(myself).getCapability(getCapability()).ifPresent(storage -> {
-                for (BlockPos pos : compatibleBlockPos) {
-                    BlockEntity entity = otherWorld.getBlockEntity(pos);
-                    if (entity != null) {
-                        entity.getCapability(getCapability()).ifPresent(otherStorage -> {
-                            int energy = otherStorage.receiveEnergy(Math.min(storage.getEnergyStored(), 5000), false);
-                            storage.extractEnergy(energy, false);
-                            if (energy > 0) return;
-                        });
+        EnergyStorage storage = getCapability().find(current, myself, Direction.UP);
+        if (storage != null){
+            for (BlockPos pos : compatibleBlockPos) {
+                EnergyStorage otherStorage = getCapability().find(otherWorld, pos, Direction.UP);
+                if (otherStorage != null){
+                    Transaction transaction = Transaction.openOuter();
+                    long energy = otherStorage.insert(Math.min(storage.getAmount(), 5000), transaction);
+                    storage.extract(energy, transaction);
+                    if (energy > 0) {
+                        transaction.commit();
+                        return;
                     }
                 }
-            });
+            }
+        }
     }
 
     @Override

@@ -46,7 +46,7 @@ public class ClientProxy extends CommonProxy {
 
     public ClientProxy() {
         EventManager.mod(EntityRenderersEvent.RegisterRenderers.class).process(registerRenderers -> {
-            registerRenderers.registerBlockEntityRenderer((BlockEntityType<? extends ControllerTile>) CommonProxy.BLOCK_CONTROLLER.getRight().get(), TESRPortal::new);
+            registerRenderers.registerBlockEntityRenderer((BlockEntityType<? extends ControllerTile>) CommonProxy.BLOCK_CONTROLLER.getRight(), TESRPortal::new);
         }).subscribe();
         EventManager.mod(EntityRenderersEvent.AddLayers.class).process(registerRenderers -> {
             for (String skin : registerRenderers.getSkins()) {

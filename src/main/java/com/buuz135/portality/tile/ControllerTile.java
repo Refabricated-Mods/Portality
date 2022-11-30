@@ -48,6 +48,8 @@ import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.block.tile.PoweredTile;
 import com.hrznstudio.titanium.client.screen.addon.StateButtonInfo;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -63,8 +65,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -93,14 +93,14 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
     private int color;
     private HashMap<String, CompoundTag> teleportationTokens;
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private TickeableSound sound;
 
     private TeleportHandler teleportHandler;
     private StructureHandler structureHandler;
 
     public ControllerTile(BlockPos pos, BlockState state) {
-        super((BasicTileBlock<ControllerTile>) CommonProxy.BLOCK_CONTROLLER.getLeft().get(),  CommonProxy.BLOCK_CONTROLLER.getRight().get(), pos, state);
+        super((BasicTileBlock<ControllerTile>) CommonProxy.BLOCK_CONTROLLER.getLeft(),  CommonProxy.BLOCK_CONTROLLER.getRight(), pos, state);
         this.teleportationTokens = new LinkedHashMap<>();
         this.isFormed = false;
         this.onceCall = false;
@@ -223,11 +223,11 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
         return this;
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     private void tickSound() {
         if (isActive()) {
             if (sound == null) {
-                Minecraft.getInstance().getSoundManager().play(sound = new TickeableSound(this.level, this.worldPosition, PortalitySoundHandler.PORTAL.get()));
+                Minecraft.getInstance().getSoundManager().play(sound = new TickeableSound(this.level, this.worldPosition, PortalitySoundHandler.PORTAL));
             } else {
                 sound.increase();
             }
@@ -479,7 +479,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
         markForUpdate();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public InteractionResult onActivated(Player playerIn, InteractionHand hand, Direction facing, double hitX, double hitY, double hitZ) {
         if (super.onActivated(playerIn, hand, facing, hitX, hitY, hitZ) != InteractionResult.SUCCESS) {
@@ -494,7 +494,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
         return new EnergyStorageComponent<>(PortalityConfig.MAX_PORTAL_POWER, PortalityConfig.MAX_PORTAL_POWER_IN, 10, 20);
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class OpenGui {
         public static void open(int id, ControllerTile controller) {
             switch (id) {

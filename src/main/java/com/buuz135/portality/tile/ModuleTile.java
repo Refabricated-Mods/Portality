@@ -57,7 +57,7 @@ public abstract class ModuleTile<T extends ModuleTile<T>> extends FrameTile<T> {
         this.input = true;
         this.addButton(button = new ButtonComponent(153, 84, 14, 14) {
 
-            @OnlyIn(Dist.CLIENT)
+            @Environment(EnvType.CLIENT)
             @Override
             public List<IFactory<? extends IScreenAddon>> getScreenAddons() {
                 return Collections.singletonList(() -> new StateButtonAddon(button,

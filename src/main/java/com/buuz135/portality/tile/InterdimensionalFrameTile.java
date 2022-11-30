@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 public class InterdimensionalFrameTile extends FrameTile<InterdimensionalFrameTile> {
 
     public InterdimensionalFrameTile(BlockPos pos, BlockState state) {
-        super((BasicTileBlock<InterdimensionalFrameTile>) CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE.getLeft().get(), CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE.getRight().get(), pos, state);
+        super((BasicTileBlock<InterdimensionalFrameTile>) CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE.getLeft(), CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE.getRight(), pos, state);
     }
 
     @Nonnull

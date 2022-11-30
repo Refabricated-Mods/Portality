@@ -29,8 +29,8 @@ import com.hrznstudio.titanium.network.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkEvent;
 
 public class PortalTeleportMessage extends Message {
 
@@ -47,10 +47,10 @@ public class PortalTeleportMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(NetworkEvent.Context context) {
+    protected void handleMessage(ServerPlayer sender) {
         Minecraft.getInstance().submitAsync(() -> {
             //Minecraft.getMinecraft().player.playSound(new SoundEvent(new ResourceLocation("entity.shulker.teleport")), 1, 1);
-            Minecraft.getInstance().player.playSound(PortalitySoundHandler.PORTAL_TP.get(), 0.1f, 1f);
+            Minecraft.getInstance().player.playSound(PortalitySoundHandler.PORTAL_TP, 0.1f, 1f);
             if (PortalityConfig.LAUNCH_PLAYERS) {
                 Direction facing = Direction.values()[this.facing];
                 Vec3 vector = new Vec3(facing.getNormal().getX(), facing.getNormal().getY(), facing.getNormal().getZ()).scale(2 * length / (double) PortalityConfig.MAX_PORTAL_LENGTH);

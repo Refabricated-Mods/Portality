@@ -24,14 +24,21 @@
 package com.buuz135.portality.proxy;
 
 import com.buuz135.portality.Portality;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.RegistryObject;
 
 public class PortalitySoundHandler {
 
-    public static RegistryObject<SoundEvent> PORTAL;
-    public static RegistryObject<SoundEvent> PORTAL_TP;
+    public static SoundEvent PORTAL = registerSoundEvent(new ResourceLocation(Portality.MOD_ID, "portal"));
+    public static SoundEvent PORTAL_TP = registerSoundEvent(new ResourceLocation(Portality.MOD_ID, "portal_teleport"));
+
+    private static SoundEvent registerSoundEvent(ResourceLocation id){
+        return Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
+    }
 
 
+    public static void init(){
+
+    }
 }

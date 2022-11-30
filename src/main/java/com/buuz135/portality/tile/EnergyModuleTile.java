@@ -29,17 +29,15 @@ import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.client.screen.addon.EnergyBarScreenAddon;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
+import team.reborn.energy.api.EnergyStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,15 +47,14 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> {
 
     @Save
     private final EnergyStorageComponent<EnergyModuleTile> energyStorage;
-    private final LazyOptional<IEnergyStorage> lazyEnergyStorage = LazyOptional.of(this::getEnergyStorage);
 
     public EnergyModuleTile(BlockPos pos, BlockState state) {
-        super((BasicTileBlock<EnergyModuleTile>) CommonProxy.BLOCK_CAPABILITY_ENERGY_MODULE.getLeft().get(), CommonProxy.BLOCK_CAPABILITY_ENERGY_MODULE.getRight().get(), pos, state);
+        super((BasicTileBlock<EnergyModuleTile>) CommonProxy.BLOCK_CAPABILITY_ENERGY_MODULE.getLeft(), CommonProxy.BLOCK_CAPABILITY_ENERGY_MODULE.getRight(), pos, state);
         this.energyStorage = new EnergyStorageComponent<>(10000, 10000, 10000, 10, 20);
         this.energyStorage.setComponentHarness(this.getSelf());
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     @Override
     public void initClient() {
         super.initClient();
@@ -69,28 +66,20 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> {
         return energyStorage;
     }
 
-    @Nonnull
-    @Override
-    public LazyOptional getCapability(@Nonnull Capability cap, @Nullable Direction side) {
-        if (cap == CapabilityEnergy.ENERGY) return lazyEnergyStorage.cast();
-        return super.getCapability(cap, side);
-    }
-
     @Override
     public void serverTick(Level level, BlockPos pos, BlockState state, EnergyModuleTile blockEntity) {
         super.serverTick(level, pos, state, blockEntity);
         if (!isInput()) {
             for (Direction facing : Direction.values()) {
                 BlockPos checking = this.worldPosition.relative(facing);
-                BlockEntity checkingTile = this.level.getBlockEntity(checking);
-                if (checkingTile != null) {
-                    checkingTile.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite()).ifPresent(storage -> {
-                        int energy = storage.receiveEnergy(Math.min(this.energyStorage.getEnergyStored(), 1000), false);
-                        if (energy > 0) {
-                            this.energyStorage.extractEnergy(energy, false);
-                            return;
-                        }
-                    });
+                EnergyStorage storage = EnergyStorage.SIDED.find(level, checking, facing.getOpposite());
+                Transaction transaction = Transaction.openOuter();
+                if (storage != null) {
+                    int energy = storage.insert(Math.min(this.energyStorage.getEnergyStored(), 1000), transaction);
+                    if (energy > 0) {
+                        this.energyStorage.extractEnergy(energy, false);
+                        transaction.commit();
+                    }
                 }
             }
         }

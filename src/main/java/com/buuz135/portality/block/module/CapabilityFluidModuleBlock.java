@@ -24,7 +24,15 @@
 package com.buuz135.portality.block.module;
 
 import com.buuz135.portality.tile.FluidModuleTile;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -36,33 +44,43 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CapabilityFluidModuleBlock extends CapabilityModuleBlock<IFluidHandler, FluidModuleTile> {
+public class CapabilityFluidModuleBlock extends CapabilityModuleBlock<Storage<FluidVariant>, FluidModuleTile> {
 
     public CapabilityFluidModuleBlock() {
         super("module_fluids", FluidModuleTile.class);
     }
 
     @Override
-    public Capability<IFluidHandler> getCapability() {
-        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+    public BlockApiLookup<Storage<FluidVariant>, Direction> getCapability() {
+        return FluidStorage.SIDED;
     }
 
     @Override
     void internalWork(Level current, BlockPos myself, Level otherWorld, List<BlockPos> compatibleBlockPos) {
-        current.getBlockEntity(myself).getCapability(getCapability(), null).ifPresent(handler -> {
-            if (!handler.drain(500, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
-                for (BlockPos pos : compatibleBlockPos) {
-                    BlockEntity otherTile = otherWorld.getBlockEntity(pos);
-                    if (otherTile != null) {
-                        otherTile.getCapability(getCapability(), null).ifPresent(otherHandler -> {
-                            int filled = otherHandler.fill(handler.drain(500, IFluidHandler.FluidAction.SIMULATE), IFluidHandler.FluidAction.EXECUTE);
-                            handler.drain(filled, IFluidHandler.FluidAction.EXECUTE);
-                            if (filled > 0) return;
-                        });
+        Storage<FluidVariant> handlerSelf = this.getCapability().find(current, myself, Direction.UP);
+        if (handlerSelf != null){
+            outer:
+            for (BlockPos otherPos : compatibleBlockPos) {
+                Storage<FluidVariant> handlerOther = this.getCapability().find(otherWorld, otherPos, Direction.UP);
+                if (handlerOther != null){
+                    Transaction transaction = Transaction.openOuter();
+                    var it = handlerSelf.iterable(transaction);
+                    for (StorageView<FluidVariant> s : it){
+                        if (!s.isResourceBlank()){
+                            if (handlerOther.supportsInsertion()){
+                                long insert = handlerOther.simulateInsert(s.getResource(), 40500, transaction);
+                                if (insert > 0){
+                                    handlerOther.insert(s.getResource(), insert, transaction);
+                                    handlerSelf.extract(s.getResource(), insert, transaction);
+                                    transaction.commit();
+                                    continue outer;
+                                }
+                            }
+                        }
                     }
                 }
             }
-        });
+        }
     }
 
     @Override

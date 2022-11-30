@@ -64,14 +64,14 @@ public class ControllerScreen extends ScreenAddonScreen implements ITileContaine
     @Override
     public void renderForeground(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         IBackgroundAsset background = (IBackgroundAsset) IAssetProvider.getAsset(PortalityAssetProvider.PROVIDER, AssetTypes.BACKGROUND);
-        String name = new TranslatableComponent(CommonProxy.BLOCK_CONTROLLER.getLeft().get().getDescriptionId()).getString();
+        String name = new TranslatableComponent(CommonProxy.BLOCK_CONTROLLER.getLeft().getDescriptionId()).getString();
         Font fontRenderer = Minecraft.getInstance().font;
         fontRenderer.drawShadow(stack, ChatFormatting.DARK_AQUA + name, this.x + background.getArea().width / 2 - fontRenderer.width(name) / 2, this.y + 3, 0x000000);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller") + " " + controller.getPortalDisplayName().substring(0, Math.min(controller.getPortalDisplayName().length(), 26)), this.x + 10, this.y + 21, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.private") + " " + controller.isPrivate(), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 1, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.max_distance") + " " + BlockPosUtils.getMaxDistance(controller.getLength()), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 2, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.interdimensional") + " " + controller.isInterdimensional(), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 3, 0xFFFFFF);
-        fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.power") + " " + new DecimalFormat().format(controller.getEnergyStorage().getEnergyStored()) + " FE", this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 4, 0xFFFFFF);
+        fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.power") + " " + new DecimalFormat().format(controller.getEnergyStorage().getEnergyStored()) + " TRE", this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 4, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.link") + " " + (controller.isActive() ? I18n.get("portality.gui.controller.link_active") : I18n.get("portality.gui.controller.link_missing")), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 5, 0xFFFFFF);
         super.renderForeground(stack, mouseX, mouseY, partialTicks);
     }

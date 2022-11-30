@@ -27,7 +27,9 @@ import com.buuz135.portality.Portality;
 import com.buuz135.portality.block.FrameBlock;
 import com.buuz135.portality.tile.ControllerTile;
 import com.buuz135.portality.tile.FrameTile;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -37,8 +39,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.capabilities.Capability;
+import team.reborn.energy.api.EnergyStorage;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -72,7 +73,7 @@ public abstract class CapabilityModuleBlock<T, S extends FrameTile<S>> extends F
         return RotationType.FOUR_WAY;
     }
 
-    public abstract Capability<T> getCapability();
+    public abstract BlockApiLookup<T, Direction> getCapability();
 
     public boolean isInput(BlockState state) {
         return state.getValue(INPUT);

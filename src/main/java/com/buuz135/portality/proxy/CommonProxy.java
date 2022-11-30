@@ -25,8 +25,14 @@ package com.buuz135.portality.proxy;
 
 import com.buuz135.portality.tile.ControllerTile;
 import com.hrznstudio.titanium.event.handler.EventManager;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,33 +45,35 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class CommonProxy {
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_CONTROLLER;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_FRAME;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_GENERATOR;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_CONTROLLER;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_FRAME;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_GENERATOR;
 
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_INTERDIMENSIONAL_MODULE;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_CAPABILITY_ITEM_MODULE;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_CAPABILITY_FLUID_MODULE;
-    public static Pair<RegistryObject<Block>, RegistryObject<BlockEntityType<?>>> BLOCK_CAPABILITY_ENERGY_MODULE;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_INTERDIMENSIONAL_MODULE;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_CAPABILITY_ITEM_MODULE;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_CAPABILITY_FLUID_MODULE;
+    public static Pair<Block, BlockEntityType<?>> BLOCK_CAPABILITY_ENERGY_MODULE;
 
-    public static RegistryObject<Item> TELEPORTATION_TOKEN_ITEM;
+    public static Item TELEPORTATION_TOKEN_ITEM;
 
     public void onCommon() {
-        EventManager.forge(PlayerInteractEvent.RightClickBlock.class).process(this::onInteract).subscribe();
+        //EventManager.forge(PlayerInteractEvent.RightClickBlock.class).process(this::onInteract).subscribe();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public void onClient(Minecraft instance) {
 
     }
 
-    public void onInteract(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getPlayer().isCrouching() && event.getPlayer().level.getBlockState(event.getPos()).getBlock().equals(BLOCK_CONTROLLER)) {
-            ControllerTile controller = (ControllerTile) event.getWorld().getBlockEntity(event.getPos());
-            if (!controller.getDisplay().sameItem(event.getItemStack())) {
-                event.setUseBlock(Event.Result.ALLOW);
+    public boolean onInteract(Player player, BlockPos pos, Level world, ItemStack stack) {
+        if (player.isCrouching() && player.level.getBlockState(pos).getBlock().equals(BLOCK_CONTROLLER.getLeft())) {
+            ControllerTile controller = (ControllerTile) world.getBlockEntity(pos);
+            if (!controller.getDisplay().sameItem(stack)) {
+                return true;
+                //event.setUseBlock(Event.Result.ALLOW);
             }
         }
+        return false;
     }
 
 }

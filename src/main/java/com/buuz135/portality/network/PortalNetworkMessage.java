@@ -40,9 +40,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +85,7 @@ public class PortalNetworkMessage {
         }
 
         @Override
-        protected void handleMessage(NetworkEvent.Context context) {
+        protected void handleMessage(ServerPlayer sender context) {
             Minecraft.getInstance().tell(() -> {
                 if (Minecraft.getInstance().screen instanceof PortalsScreen) {
                     List<PortalInformation> information = new ArrayList<>();

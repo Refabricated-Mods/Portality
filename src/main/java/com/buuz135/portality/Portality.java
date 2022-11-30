@@ -46,6 +46,7 @@ import com.hrznstudio.titanium.network.NetworkHandler;
 import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
+import net.fabricmc.api.ModInitializer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -72,8 +73,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Mod("portality")
-public class Portality extends ModuleController {
+public class Portality extends ModuleController implements ModInitializer {
 
     public static final String MOD_ID = "portality";
     public static NetworkHandler NETWORK = new NetworkHandler(MOD_ID);
@@ -133,12 +133,7 @@ public class Portality extends ModuleController {
         CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE = getRegistries().registerBlockWithTile("module_interdimensional", InterdimensionalModuleBlock::new);
         CommonProxy.BLOCK_GENERATOR = getRegistries().registerBlockWithTile("generator", GeneratorBlock::new);
         CommonProxy.TELEPORTATION_TOKEN_ITEM = getRegistries().registerGeneric(Item.class, "teleportation_token", TeleportationTokenItem::new);
-
-        PortalitySoundHandler.PORTAL = getRegistries().registerGeneric(SoundEvent.class, "portal", () -> new SoundEvent(new ResourceLocation(Portality.MOD_ID, "portal")));
-        PortalitySoundHandler.PORTAL_TP = getRegistries().registerGeneric(SoundEvent.class, "portal_teleport",  () -> new SoundEvent(new ResourceLocation(Portality.MOD_ID, "portal_teleport")));
-    }
-
-    public void onCommon(FMLCommonSetupEvent event) {
+        PortalitySoundHandler.init();
         proxy.onCommon();
     }
 
@@ -147,9 +142,9 @@ public class Portality extends ModuleController {
     }
 
     @Override
-    public void addDataProvider(GatherDataEvent event) {
-        super.addDataProvider(event);
-        event.getGenerator().addProvider(new PortalityBlockTagsProvider(event.getGenerator(), MOD_ID, event.getExistingFileHelper()));
+    public void onInitialize() {
+
+
     }
 
     public enum AuraType {

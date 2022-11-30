@@ -29,9 +29,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
 
 public class PortalChangeColorMessage extends Message {
 
@@ -49,8 +49,8 @@ public class PortalChangeColorMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(NetworkEvent.Context context) {
-        Level world = context.getSender().level.getServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
+    protected void handleMessage(ServerPlayer sender) {
+        Level world = sender.level.getServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
         BlockEntity tileEntity = world.getBlockEntity(pos);
         if (tileEntity instanceof ControllerTile) {
             ((ControllerTile) tileEntity).setColor(color);

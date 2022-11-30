@@ -28,7 +28,6 @@ import com.hrznstudio.titanium.network.Message;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
 
 public class PortalPrivacyToggleMessage extends Message {
 
@@ -43,15 +42,12 @@ public class PortalPrivacyToggleMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(NetworkEvent.Context context) {
-        ServerPlayer serverPlayer = context.getSender();
-        context.enqueueWork(() -> {
-            Level world = serverPlayer.level;
-            if (world.getBlockEntity(tileLocation) instanceof ControllerTile) {
-                ControllerTile controller = (ControllerTile) world.getBlockEntity(tileLocation);
-                if (controller.getOwner().equals(serverPlayer.getUUID())) controller.togglePrivacy();
-            }
-        });
+    protected void handleMessage(ServerPlayer sender) {
+        Level world = sender.level;
+        if (world.getBlockEntity(tileLocation) instanceof ControllerTile) {
+            ControllerTile controller = (ControllerTile) world.getBlockEntity(tileLocation);
+            if (controller.getOwner().equals(sender.getUUID())) controller.togglePrivacy();
+        }
     }
 
 }

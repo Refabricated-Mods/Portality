@@ -24,6 +24,12 @@
 package com.buuz135.portality.block.module;
 
 import com.buuz135.portality.tile.ItemModuleTile;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -39,37 +45,43 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CapabilityItemModuleBlock extends CapabilityModuleBlock<IItemHandler, ItemModuleTile> {
+public class CapabilityItemModuleBlock extends CapabilityModuleBlock<Storage<ItemVariant>, ItemModuleTile> {
 
     public CapabilityItemModuleBlock() {
         super("module_items", ItemModuleTile.class);
     }
 
     @Override
-    public Capability<IItemHandler> getCapability() {
-        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    public BlockApiLookup<Storage<ItemVariant>, Direction> getCapability() {
+        return ItemStorage.SIDED;
     }
 
     @Override
     void internalWork(Level current, BlockPos myself, Level otherWorld, List<BlockPos> compatibleBlockPos) {
-        current.getBlockEntity(myself).getCapability(this.getCapability(), Direction.UP).ifPresent(handlerSelf -> {
+        Storage<ItemVariant> handlerSelf = this.getCapability().find(current, myself, Direction.UP);
+        if (handlerSelf != null){
+            outer:
             for (BlockPos otherPos : compatibleBlockPos) {
-                BlockEntity otherTile = otherWorld.getBlockEntity(otherPos);
-                if (otherTile != null) {
-                    otherTile.getCapability(this.getCapability(), Direction.UP).ifPresent(handlerOther -> {
-                        for (int i = 0; i < handlerSelf.getSlots(); i++) {
-                            ItemStack stack = handlerSelf.getStackInSlot(i);
-                            if (stack.isEmpty()) continue;
-                            if (ItemHandlerHelper.insertItem(handlerOther, stack, true).isEmpty()) {
-                                ItemHandlerHelper.insertItem(handlerOther, stack.copy(), false);
-                                handlerSelf.getStackInSlot(i).setCount(0);
-                                return;
+                Storage<ItemVariant> handlerOther = this.getCapability().find(otherWorld, otherPos, Direction.UP);
+                if (handlerOther != null){
+                    Transaction transaction = Transaction.openOuter();
+                    var it = handlerSelf.iterable(transaction);
+                    for (StorageView<ItemVariant> s : it){
+                        if (!s.isResourceBlank()){
+                            if (handlerOther.supportsInsertion()){
+                                long insert = handlerOther.simulateInsert(s.getResource(), s.getAmount(), transaction);
+                                if (insert > 0){
+                                    handlerOther.insert(s.getResource(), insert, transaction);
+                                    handlerSelf.extract(s.getResource(), insert, transaction);
+                                    transaction.commit();
+                                    continue outer;
+                                }
                             }
                         }
-                    });
+                    }
                 }
             }
-        });
+        }
     }
 
     @Override
