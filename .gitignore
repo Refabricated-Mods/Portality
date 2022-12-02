@@ -30,3 +30,6 @@ CHANGELOG.md
 # Project exclude paths
 /build/
 /.gradle/
+
+# titanium local dep
+Titanium

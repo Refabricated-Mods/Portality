@@ -13,3 +13,8 @@ pluginManagement {
 }
 
 rootProject.name='portality'
+def titaniumFolder = new File('Titanium')
+if(titaniumFolder.exists()) {
+    include("titanium")
+    project(":titanium").setProjectDir(new File("Titanium"))
+}
