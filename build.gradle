@@ -18,10 +18,15 @@ loom {
 
 repositories {
     mavenCentral()
-    jcenter()
     maven {
-        name 'jared maven'
-        url "https://maven.blamejared.com/"
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
     }
     maven {
         url "https://maven.tterrag.com/"
@@ -30,15 +35,27 @@ repositories {
         url 'https://www.dogforce-games.com/maven/'
     }
     maven {
-        url = "https://www.cursemaven.com"
-    }
-    maven {
         name = 'parchment'
         url = 'https://maven.parchmentmc.org'
     }
     maven {
         url = uri("https://storage.googleapis.com/devan-maven/")
     }
+    maven {
+        url "https://maven.terraformersmc.com"
+        content {
+            includeGroup "com.terraformersmc"
+        }
+    }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+    maven {
+        url "https://repo.repsy.io/mvn/distant/feltmc"
+    }
+    maven { url = "https://mvn.devos.one/snapshots/" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -56,6 +73,10 @@ dependencies {
     }
     include modApi("teamreborn:energy:${project.tr_energy_version}") {
         exclude(group: "net.fabricmc.fabric-api")
+    }
+    modImplementation("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable"){
+        exclude(group: "net.fabricmc.fabric-api")
+        exclude(group: "com.github.LlamaLad7")
     }
     //runtimeOnly fg.deobf("team.chisel.ctm:CTM:1.18-+")
 }

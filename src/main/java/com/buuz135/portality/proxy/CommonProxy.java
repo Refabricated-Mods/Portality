@@ -24,10 +24,6 @@
 package com.buuz135.portality.proxy;
 
 import com.buuz135.portality.tile.ControllerTile;
-import com.hrznstudio.titanium.event.handler.EventManager;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -35,11 +31,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.registries.RegistryObject;
 import org.apache.commons.lang3.tuple.Pair;
 
 
@@ -58,11 +49,6 @@ public class CommonProxy {
 
     public void onCommon() {
         //EventManager.forge(PlayerInteractEvent.RightClickBlock.class).process(this::onInteract).subscribe();
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void onClient(Minecraft instance) {
-
     }
 
     public boolean onInteract(Player player, BlockPos pos, Level world, ItemStack stack) {

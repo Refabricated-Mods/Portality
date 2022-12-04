@@ -49,7 +49,7 @@ public class PortalChangeColorMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(ServerPlayer sender) {
+    protected void handleClient(ServerPlayer sender) {
         Level world = sender.level.getServer().getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, dimension));
         BlockEntity tileEntity = world.getBlockEntity(pos);
         if (tileEntity instanceof ControllerTile) {

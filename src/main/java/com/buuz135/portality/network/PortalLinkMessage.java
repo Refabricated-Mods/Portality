@@ -52,7 +52,7 @@ public class PortalLinkMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(ServerPlayer sender) {
+    protected void handleClient(ServerPlayer sender) {
         Level world = sender.level.getServer().getLevel(linkSender.getDimension());
         BlockEntity tileEntity = world.getBlockEntity(linkSender.getPos());
         if (tileEntity instanceof ControllerTile) {

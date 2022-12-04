@@ -23,6 +23,7 @@
  */
 package com.buuz135.portality.data;
 
+import com.hrznstudio.titanium.util.NBTUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -138,7 +139,7 @@ public class PortalInformation {
         infoTag.putString("Dimension", getDimension().location().toString());
         infoTag.putLong("Position", getLocation().asLong());
         infoTag.putString("Name", getName());
-        infoTag.put("Display", display.serializeNBT());
+        infoTag.put("Display", NBTUtil.tagFromStack(display));
         infoTag.putBoolean("Interdimensional", interdimensional);
         infoTag.putBoolean("Token", isToken());
         return infoTag;

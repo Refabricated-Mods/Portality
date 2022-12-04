@@ -71,7 +71,7 @@ public class ControllerScreen extends ScreenAddonScreen implements ITileContaine
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.private") + " " + controller.isPrivate(), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 1, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.max_distance") + " " + BlockPosUtils.getMaxDistance(controller.getLength()), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 2, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.interdimensional") + " " + controller.isInterdimensional(), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 3, 0xFFFFFF);
-        fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.power") + " " + new DecimalFormat().format(controller.getEnergyStorage().getEnergyStored()) + " TRE", this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 4, 0xFFFFFF);
+        fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.power") + " " + new DecimalFormat().format(controller.getEnergyStorage().getAmount()) + " TRE", this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 4, 0xFFFFFF);
         fontRenderer.drawShadow(stack, I18n.get("portality.gui.controller.link") + " " + (controller.isActive() ? I18n.get("portality.gui.controller.link_active") : I18n.get("portality.gui.controller.link_missing")), this.x + 10, this.y + 21 + (fontRenderer.lineHeight + 1) * 5, 0xFFFFFF);
         super.renderForeground(stack, mouseX, mouseY, partialTicks);
     }

@@ -30,42 +30,32 @@ import com.buuz135.portality.block.InterdimensionalModuleBlock;
 import com.buuz135.portality.block.module.CapabilityEnergyModuleBlock;
 import com.buuz135.portality.block.module.CapabilityFluidModuleBlock;
 import com.buuz135.portality.block.module.CapabilityItemModuleBlock;
-import com.buuz135.portality.datagen.PortalityBlockTagsProvider;
 import com.buuz135.portality.item.TeleportationTokenItem;
 import com.buuz135.portality.network.*;
 import com.buuz135.portality.proxy.CommonProxy;
 import com.buuz135.portality.proxy.PortalitySoundHandler;
-import com.buuz135.portality.proxy.client.ClientProxy;
-import com.buuz135.portality.proxy.client.render.AuraRender;
 import com.buuz135.portality.tile.BasicFrameTile;
 import com.buuz135.portality.tile.ControllerTile;
-import com.hrznstudio.titanium.TitaniumClient;
-import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.ModuleController;
 import com.hrznstudio.titanium.network.NetworkHandler;
 import com.hrznstudio.titanium.reward.Reward;
 import com.hrznstudio.titanium.reward.RewardGiver;
 import com.hrznstudio.titanium.reward.RewardManager;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -73,20 +63,44 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class Portality extends ModuleController implements ModInitializer {
+public class Portality extends ModuleController {
 
     public static final String MOD_ID = "portality";
     public static NetworkHandler NETWORK = new NetworkHandler(MOD_ID);
-    public static final CreativeModeTab TAB = new CreativeModeTab(MOD_ID) {
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(CommonProxy.BLOCK_CONTROLLER.getLeft().get());
-        }
-    };
+    public static final CreativeModeTab TAB = FabricItemGroupBuilder.build(new ResourceLocation(MOD_ID, "main"), () -> new ItemStack(CommonProxy.BLOCK_CONTROLLER.getLeft()));
 
     public static CommonProxy proxy;
 
     public Portality() {
+        super(MOD_ID);
+        proxy = new CommonProxy();
+
+    }
+
+    private static InteractionResult onRightClick(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
+        if (world.isClientSide() || !player.isCrouching()) return InteractionResult.PASS;
+        BlockEntity entity = world.getBlockEntity(hitResult.getBlockPos());
+        if (entity instanceof ControllerTile controllerTile) {
+            ItemStack stack = player.getItemInHand(hand);
+            if (!stack.isEmpty()) {
+                if (!stack.sameItem(controllerTile.getDisplay())) {
+                    if (stack.getItem() instanceof TeleportationTokenItem) {
+                        if (stack.hasTag()) {
+                            controllerTile.addTeleportationToken(stack);
+                            player.displayClientMessage(new TranslatableComponent("portility.controller.info.added_token").withStyle(ChatFormatting.GREEN), true);
+                        }
+                        return InteractionResult.SUCCESS;
+                    }
+                    player.displayClientMessage(new TranslatableComponent("portility.controller.info.icon_changed").withStyle(ChatFormatting.GREEN), true);
+                    controllerTile.setDisplayNameEnabled(stack);
+                }
+            }
+        }
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public void onPreInit() {
         NETWORK.registerMessage(PortalPrivacyToggleMessage.class);
         NETWORK.registerMessage(PortalPrivacyToggleMessage.class);
         NETWORK.registerMessage(PortalRenameMessage.class);
@@ -96,9 +110,7 @@ public class Portality extends ModuleController implements ModInitializer {
         NETWORK.registerMessage(PortalTeleportMessage.class);
         NETWORK.registerMessage(PortalDisplayToggleMessage.class);
         NETWORK.registerMessage(PortalChangeColorMessage.class);
-        proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
-        EventManager.mod(FMLCommonSetupEvent.class).process(this::onCommon).subscribe();
-        EventManager.mod(FMLClientSetupEvent.class).process(this::onClient).subscribe();
+        UseBlockCallback.EVENT.register(Portality::onRightClick);
         RewardGiver giver = RewardManager.get().getGiver(UUID.fromString("d28b7061-fb92-4064-90fb-7e02b95a72a6"), "Buuz135");
         try {
             giver.addReward(new Reward(new ResourceLocation(Portality.MOD_ID, "aura"), new URL("https://raw.githubusercontent.com/Buuz135/Industrial-Foregoing/master/contributors.json"), () -> dist -> {
@@ -106,21 +118,6 @@ public class Portality extends ModuleController implements ModInitializer {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        EventManager.forge(PlayerInteractEvent.RightClickBlock.class).filter(event -> !event.getWorld().isClientSide && event.getPlayer().isCrouching() && event.getWorld().getBlockEntity(event.getPos()) instanceof ControllerTile && !event.getPlayer().getItemInHand(event.getHand()).isEmpty()).process(event -> {
-            ControllerTile controllerTile = (ControllerTile) event.getWorld().getBlockEntity(event.getPos());
-            ItemStack stack = event.getPlayer().getItemInHand(event.getHand());
-            if (!stack.sameItem(controllerTile.getDisplay())) {
-                if (stack.getItem() instanceof TeleportationTokenItem){
-                    if (stack.hasTag()){
-                        controllerTile.addTeleportationToken(stack);
-                        event.getPlayer().displayClientMessage(new TranslatableComponent("portility.controller.info.added_token").withStyle(ChatFormatting.GREEN), true);
-                    }
-                    return;
-                }
-                event.getPlayer().displayClientMessage(new TranslatableComponent("portility.controller.info.icon_changed").withStyle(ChatFormatting.GREEN), true);
-                controllerTile.setDisplayNameEnabled(stack);
-            }
-        }).subscribe();
     }
 
     @Override
@@ -132,19 +129,9 @@ public class Portality extends ModuleController implements ModInitializer {
         CommonProxy.BLOCK_CAPABILITY_ITEM_MODULE = getRegistries().registerBlockWithTile("module_items", CapabilityItemModuleBlock::new);
         CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE = getRegistries().registerBlockWithTile("module_interdimensional", InterdimensionalModuleBlock::new);
         CommonProxy.BLOCK_GENERATOR = getRegistries().registerBlockWithTile("generator", GeneratorBlock::new);
-        CommonProxy.TELEPORTATION_TOKEN_ITEM = getRegistries().registerGeneric(Item.class, "teleportation_token", TeleportationTokenItem::new);
+        CommonProxy.TELEPORTATION_TOKEN_ITEM = getRegistries().registerGeneric(Registry.ITEM, "teleportation_token", TeleportationTokenItem::new);
         PortalitySoundHandler.init();
         proxy.onCommon();
-    }
-
-    public void onClient(FMLClientSetupEvent event) {
-        proxy.onClient(Minecraft.getInstance());
-    }
-
-    @Override
-    public void onInitialize() {
-
-
     }
 
     public enum AuraType {

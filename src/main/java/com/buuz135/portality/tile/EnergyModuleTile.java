@@ -27,6 +27,7 @@ package com.buuz135.portality.tile;
 import com.buuz135.portality.proxy.CommonProxy;
 import com.hrznstudio.titanium.annotation.Save;
 import com.hrznstudio.titanium.block.BasicTileBlock;
+import com.hrznstudio.titanium.block.tile.IEnergyTile;
 import com.hrznstudio.titanium.client.screen.addon.EnergyBarScreenAddon;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import net.fabricmc.api.EnvType;
@@ -37,13 +38,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 
-public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> {
+public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> implements IEnergyTile {
 
     @Save
     private final EnergyStorageComponent<EnergyModuleTile> energyStorage;
@@ -75,9 +76,9 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> {
                 EnergyStorage storage = EnergyStorage.SIDED.find(level, checking, facing.getOpposite());
                 Transaction transaction = Transaction.openOuter();
                 if (storage != null) {
-                    int energy = storage.insert(Math.min(this.energyStorage.getEnergyStored(), 1000), transaction);
+                    long energy = storage.insert(Math.min(this.energyStorage.getAmount(), 1000), transaction);
                     if (energy > 0) {
-                        this.energyStorage.extractEnergy(energy, false);
+                        this.energyStorage.extract(energy, transaction);
                         transaction.commit();
                     }
                 }
@@ -89,5 +90,10 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> {
     @Override
     public EnergyModuleTile getSelf() {
         return this;
+    }
+
+    @Override
+    public EnergyStorage getEnergyStorage(@Nullable Direction side) {
+        return energyStorage;
     }
 }

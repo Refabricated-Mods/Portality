@@ -31,6 +31,7 @@ import com.buuz135.portality.gui.PortalsScreen;
 import com.buuz135.portality.tile.ControllerTile;
 import com.buuz135.portality.util.BlockPosUtils;
 import com.hrznstudio.titanium.network.Message;
+import io.github.fabricators_of_create.porting_lib.util.NetworkDirection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -68,7 +69,7 @@ public class PortalNetworkMessage {
             BlockEntity entity = world.getBlockEntity(information.getLocation());
             return entity instanceof ControllerTile && !interdimensional && (!playerEntity.getLevel().dimension().equals(information.getDimension()) || (!information.getLocation().closerThan(pos, distance) || !information.getLocation().closerThan(pos, BlockPosUtils.getMaxDistance(((ControllerTile) entity).getLength()))));
         });
-        Portality.NETWORK.get().sendTo(new Response(infos), playerEntity.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        Portality.NETWORK.get().sendToClient(new Response(infos), playerEntity);
     }
 
     public static class Response extends Message {
@@ -85,7 +86,7 @@ public class PortalNetworkMessage {
         }
 
         @Override
-        protected void handleMessage(ServerPlayer sender context) {
+        protected void handleServer() {
             Minecraft.getInstance().tell(() -> {
                 if (Minecraft.getInstance().screen instanceof PortalsScreen) {
                     List<PortalInformation> information = new ArrayList<>();

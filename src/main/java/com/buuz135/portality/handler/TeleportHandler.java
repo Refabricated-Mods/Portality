@@ -31,6 +31,7 @@ import com.buuz135.portality.proxy.PortalityConfig;
 import com.buuz135.portality.proxy.PortalitySoundHandler;
 import com.buuz135.portality.tile.ControllerTile;
 import com.hrznstudio.titanium.util.TeleportationUtils;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -91,7 +92,7 @@ public class TeleportHandler {
             destination = destination.subtract(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()).scale((entry.getValue().time += 0.05) / distance);
             if (destinationPos.closerThan(new Vec3i(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()), 1.5)) {
                 if (!entry.getKey().level.isClientSide) {
-                    if (controller.getEnergyStorage().getEnergyStored() >= PortalityConfig.TELEPORT_ENERGY_AMOUNT) {
+                    if (controller.getEnergyStorage().getAmount() >= PortalityConfig.TELEPORT_ENERGY_AMOUNT) {
                         Level tpWorld = entry.getKey().level.getServer().getLevel(entry.getValue().data.getDimension());
                         Direction tpFacing = Direction.NORTH;
                         if (controller.getLinkData().isToken()){
@@ -102,9 +103,11 @@ public class TeleportHandler {
                         BlockPos pos = entry.getValue().data.getPos().relative(tpFacing, 2);
                         Entity entity = TeleportationUtils.teleportEntity(entry.getKey(), entry.getValue().data.getDimension(), pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5, tpFacing.toYRot(), 0);
                         entitesTeleported.put(entity, new TeleportedEntityData(entry.getValue().data));
-                        controller.getEnergyStorage().extractEnergy(PortalityConfig.TELEPORT_ENERGY_AMOUNT, false);
+                        Transaction transaction = Transaction.openOuter();
+                        controller.getEnergyStorage().extract(PortalityConfig.TELEPORT_ENERGY_AMOUNT, transaction);
+                        transaction.commit();
                         if (entry.getKey() instanceof ServerPlayer)
-                            Portality.NETWORK.get().sendTo(new PortalTeleportMessage(tpFacing.get3DDataValue(), controller.getLength()), ((ServerPlayer) entry.getKey()).connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+                            Portality.NETWORK.get().sendToClient(new PortalTeleportMessage(tpFacing.get3DDataValue(), controller.getLength()), ((ServerPlayer) entry.getKey()));
                         if (controller.teleportedEntity()) {
                             return;
                         }
@@ -127,7 +130,7 @@ public class TeleportHandler {
             entry.getValue().ticks++;
             if (entry.getValue().ticks > 2 && !entry.getValue().moved) {
                 if (entry.getKey().level.isClientSide)
-                    entry.getKey().level.getEntitiesOfClass(ServerPlayer.class, new AABB(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ(), entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()).inflate(16)).forEach(entityPlayer -> entityPlayer.connection.send(new ClientboundCustomSoundPacket(PortalitySoundHandler.PORTAL_TP.get().getRegistryName(), SoundSource.BLOCKS, new Vec3(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()), 0.5f, 1f)));
+                    entry.getKey().level.getEntitiesOfClass(ServerPlayer.class, new AABB(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ(), entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()).inflate(16)).forEach(entityPlayer -> entityPlayer.connection.send(new ClientboundCustomSoundPacket(PortalitySoundHandler.PORTAL_TP.getLocation(), SoundSource.BLOCKS, new Vec3(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()), 0.5f, 1f)));
                 entry.getValue().moved = true;
                 Level tpWorld = entry.getKey().level;
                 Direction tpFacing = Direction.NORTH;

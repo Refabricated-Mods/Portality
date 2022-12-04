@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "portality",
+  "version": "${version}",
+  "name": "Portality",
+  "description": "Thinking through portals",
+  "authors": [
+    "Trinsdar",
+    "Buuz135"
+  ],
+  "contact": {
+    "sources": "https://github.com/Refabricated-Mods/Portality/tree/1.18-fabric"
+  },
+  "license": "LGPL-3.0-only",
+  "environment": "*",
+  "accessWidener": "portality.accesswidener",
+  "entrypoints": {
+    "main": [
+      "com.buuz135.portality.Portality"
+    ],
+    "client": [
+      "com.buuz135.portality.PortalityClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.4.0",
+    "titanium" : "*"
+  }
+}

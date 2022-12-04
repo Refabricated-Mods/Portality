@@ -42,7 +42,7 @@ public class PortalDisplayToggleMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(ServerPlayer sender) {
+    protected void handleClient(ServerPlayer sender) {
         Level world = sender.level;
         BlockPos pos = BlockPos.of(tileLocation);
         if (world.getBlockEntity(pos) instanceof ControllerTile) {

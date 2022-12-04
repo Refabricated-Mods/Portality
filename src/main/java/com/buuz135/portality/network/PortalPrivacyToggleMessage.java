@@ -42,7 +42,7 @@ public class PortalPrivacyToggleMessage extends Message {
     }
 
     @Override
-    protected void handleMessage(ServerPlayer sender) {
+    protected void handleClient(ServerPlayer sender) {
         Level world = sender.level;
         if (world.getBlockEntity(tileLocation) instanceof ControllerTile) {
             ControllerTile controller = (ControllerTile) world.getBlockEntity(tileLocation);

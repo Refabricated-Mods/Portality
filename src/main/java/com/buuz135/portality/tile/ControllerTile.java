@@ -50,6 +50,7 @@ import com.hrznstudio.titanium.client.screen.addon.StateButtonInfo;
 import com.hrznstudio.titanium.component.energy.EnergyStorageComponent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -169,8 +170,10 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
             workModules();
         }
         if (isActive() && linkData != null) {
-            this.getEnergyStorage().extractEnergy((linkData.isCaller() ? 2 : 1) * structureHandler.getLength() * PortalityConfig.POWER_PORTAL_TICK, false);
-            if (this.getEnergyStorage().getEnergyStored() == 0 || !isFormed) {
+            Transaction transaction = Transaction.openOuter();
+            this.getEnergyStorage().extract((linkData.isCaller() ? 2 : 1) * structureHandler.getLength() * PortalityConfig.POWER_PORTAL_TICK, transaction);
+            transaction.commit();
+            if (this.getEnergyStorage().getAmount() == 0 || !isFormed) {
                 closeLink();
             }
         }
@@ -381,7 +384,9 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
             if (data.getDimension().location().equals(this.level.dimension().location())) {
                 power = (int) this.worldPosition.distSqr(data.getPos()) * structureHandler.getLength();
             }
-            this.getEnergyStorage().extractEnergy(power, false);
+            Transaction transaction = Transaction.openOuter();
+            this.getEnergyStorage().extract(power, transaction);
+            transaction.commit();
         }
         PortalDataManager.setActiveStatus(this.level, this.worldPosition, true);
         this.linkData = data;

@@ -26,11 +26,9 @@ package com.buuz135.portality.block;
 import com.buuz135.portality.Portality;
 import com.buuz135.portality.data.PortalDataManager;
 import com.buuz135.portality.data.PortalInformation;
-import com.buuz135.portality.item.TeleportationTokenItem;
 import com.buuz135.portality.proxy.CommonProxy;
 import com.buuz135.portality.tile.ControllerTile;
 import com.hrznstudio.titanium.block.RotatableBlock;
-import com.hrznstudio.titanium.event.handler.EventManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -65,7 +63,7 @@ public class ControllerBlock extends RotatableBlock<ControllerTile> {
 
     @Override
     public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        PortalInformation information = new PortalInformation(UUID.randomUUID(), placer.getUUID(), false, false, worldIn.dimension(), pos, "X: " + pos.getX() + " Y: " + pos.getY() + " Z: " + pos.getZ(), new ItemStack(CommonProxy.BLOCK_FRAME.getLeft().get()), false);
+        PortalInformation information = new PortalInformation(UUID.randomUUID(), placer.getUUID(), false, false, worldIn.dimension(), pos, "X: " + pos.getX() + " Y: " + pos.getY() + " Z: " + pos.getZ(), new ItemStack(CommonProxy.BLOCK_FRAME.getLeft()), false);
         PortalDataManager.addInformation(worldIn, information);
         super.setPlacedBy(worldIn, pos, state, placer, stack);
     }
