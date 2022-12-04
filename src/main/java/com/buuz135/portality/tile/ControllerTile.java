@@ -313,7 +313,8 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
         return new AABB(corner1, corner2);
     }
 
-    @Override
+    //TODO felt api module?
+    //@Override
     public AABB getRenderBoundingBox() {
         return getPortalArea();
     }
