@@ -44,7 +44,7 @@ public class ChunkLoaderHandler {
             ChunkPos chunkPos = world.getChunkAt(controller.getBlockPos()).getPos();
             if (!((ServerLevel) world).getForcedChunks().contains(chunkPos.toLong())) {
                 ((ServerLevel) world).setChunkForced(chunkPos.x, chunkPos.z, true);
-                if (!world.isAreaLoaded(controller.getBlockPos(), 2)) {
+                if (!world.hasChunksAt(controller.getBlockPos().offset(-2, -2, -2), controller.getBlockPos().offset(2, 2, 2))){
                     world.getChunkAt(controller.getBlockPos()).setLoaded(true);
                 }
             }
