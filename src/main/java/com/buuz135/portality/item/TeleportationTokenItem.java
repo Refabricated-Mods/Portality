@@ -65,7 +65,8 @@ public class TeleportationTokenItem extends BasicItem {
         return stack.hasTag();
     }
 
-    @Override
+    //TODO once felt item api is merged
+    //@Override
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
         return world.getBlockEntity(pos) instanceof ControllerTile;
     }
