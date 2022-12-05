@@ -74,6 +74,7 @@ dependencies {
     include modApi("teamreborn:energy:${project.tr_energy_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
+    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:9695183f48")) { transitive false }
     modImplementation("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable"){
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")

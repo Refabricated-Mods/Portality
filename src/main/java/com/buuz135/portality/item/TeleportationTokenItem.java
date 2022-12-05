@@ -3,6 +3,7 @@ package com.buuz135.portality.item;
 import com.buuz135.portality.Portality;
 import com.buuz135.portality.tile.ControllerTile;
 import com.hrznstudio.titanium.item.BasicItem;
+import io.github.feltmc.feltapi.api.item.extensions.SneakBypassUseItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Locale;
 
-public class TeleportationTokenItem extends BasicItem {
+public class TeleportationTokenItem extends BasicItem implements SneakBypassUseItem {
 
     public TeleportationTokenItem() {
         super(new Properties().stacksTo(1).tab(Portality.TAB));
@@ -65,8 +66,8 @@ public class TeleportationTokenItem extends BasicItem {
         return stack.hasTag();
     }
 
-    //TODO once felt item api is merged
-    //@Override
+
+    @Override
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
         return world.getBlockEntity(pos) instanceof ControllerTile;
     }
