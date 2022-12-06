@@ -23,52 +23,71 @@
  */
 package com.buuz135.portality.proxy;
 
+import com.buuz135.portality.Portality;
 import com.hrznstudio.titanium.annotation.config.ConfigFile;
 import com.hrznstudio.titanium.annotation.config.ConfigVal;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 
-@ConfigFile()
-public class PortalityConfig {
+@Config(name = Portality.MOD_ID)
+public class PortalityConfig implements ConfigData {
 
+    @ConfigEntry.Gui.Excluded
+    public static PortalityConfig INSTANCE;
+
+
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 10000000, min = 1)
     @ConfigVal(comment = "The amount of energy it will be consumed to teleport an entity")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int TELEPORT_ENERGY_AMOUNT = 500;
+    public int TELEPORT_ENERGY_AMOUNT = 500;
 
+    @ConfigEntry.Gui.PrefixText
     @ConfigVal(comment = "If true players will get the wither effect if there isn't enough power to teleport")
-    public static boolean HURT_PLAYERS = true;
+    public boolean HURT_PLAYERS = true;
 
+    @ConfigEntry.Gui.PrefixText
     @ConfigVal(comment = "If true players will be launched out of the portal instead of standing still in front of it")
-    public static boolean LAUNCH_PLAYERS = true;
+    public boolean LAUNCH_PLAYERS = true;
 
+    @ConfigEntry.Gui.PrefixText
     @ConfigVal(comment = "How long the portal structure it can be")
-    public static int MAX_PORTAL_LENGTH = 16;
+    public int MAX_PORTAL_LENGTH = 16;
 
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 100, min = 1)
     @ConfigVal(comment = "How wide a portal can be without counting the controller(radius)")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int MAX_PORTAL_WIDTH = 7;
-
+    public int MAX_PORTAL_WIDTH = 7;
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 200, min = 3)
     @ConfigVal(comment = "How tall a portal can be (diameter)")
-    @ConfigVal.InRangeInt(min = 3)
-    public static int MAX_PORTAL_HEIGHT = 15;
-
+    public int MAX_PORTAL_HEIGHT = 15;
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = Long.MAX_VALUE, min = 1)
     @ConfigVal(comment = "Portal energy buffer")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int MAX_PORTAL_POWER = 100000;
-
+    public int MAX_PORTAL_POWER = 100000;
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 100000, min = 1)
     @ConfigVal(comment = "Portal energy buffer insertion rate")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int MAX_PORTAL_POWER_IN = 2000;
-
+    public int MAX_PORTAL_POWER_IN = 2000;
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 100000000, min = 1)
     @ConfigVal(comment = "How much power it will be consumed to open the portal interdimensionally")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int PORTAL_POWER_OPEN_INTERDIMENSIONAL = 10000;
-
+    public int PORTAL_POWER_OPEN_INTERDIMENSIONAL = 10000;
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 100, min = 1)
     @ConfigVal(comment = "How much power it will be consumed/tick based on the portal length and if it is the caller. (portalLength*ThisValue). If it is the portal the created the link the power will be double")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int POWER_PORTAL_TICK = 1;
-
+    public int POWER_PORTAL_TICK = 1;
+    @ConfigEntry.Gui.PrefixText
+    @ConfigEntry.BoundedDiscrete(max = 1000, min = 1)
     @ConfigVal(comment = "Max distance multiplier that a portal can be linked, based on length. PortalLength*ThisValue")
-    @ConfigVal.InRangeInt(min = 1)
-    public static int DISTANCE_MULTIPLIER = 200;
+    public int DISTANCE_MULTIPLIER = 200;
 
 
+    public static void init(){
+        AutoConfig.register(PortalityConfig.class, Toml4jConfigSerializer::new);
+        INSTANCE = AutoConfig.getConfigHolder(PortalityConfig.class).getConfig();
+    }
 }

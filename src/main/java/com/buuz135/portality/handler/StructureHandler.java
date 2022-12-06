@@ -103,17 +103,17 @@ public class StructureHandler {
         //Checking width
         Direction widthFacing = controllerFacing.getClockWise();
         int width = 1;
-        while (isValidFrame(this.controller.getBlockPos().relative(widthFacing, width)) && !isValidFrame(this.controller.getBlockPos().relative(widthFacing, width).relative(Direction.UP)) && width <= PortalityConfig.MAX_PORTAL_WIDTH) {
+        while (isValidFrame(this.controller.getBlockPos().relative(widthFacing, width)) && !isValidFrame(this.controller.getBlockPos().relative(widthFacing, width).relative(Direction.UP)) && width <= PortalityConfig.INSTANCE.MAX_PORTAL_WIDTH) {
             ++width;
         }
         //Checking height
         int height = 1;
-        while (isValidFrame(this.controller.getBlockPos().relative(widthFacing, width).relative(Direction.UP, height)) && height <= PortalityConfig.MAX_PORTAL_HEIGHT) {
+        while (isValidFrame(this.controller.getBlockPos().relative(widthFacing, width).relative(Direction.UP, height)) && height <= PortalityConfig.INSTANCE.MAX_PORTAL_HEIGHT) {
             ++height;
         }
         Direction lengthChecking = controllerFacing.getOpposite();
         int length = 1;
-        while (isValidFrame(this.controller.getBlockPos().relative(lengthChecking, length)) && length <= PortalityConfig.MAX_PORTAL_LENGTH) {
+        while (isValidFrame(this.controller.getBlockPos().relative(lengthChecking, length)) && length <= PortalityConfig.INSTANCE.MAX_PORTAL_LENGTH) {
             ++length;
         }
         this.width = width;

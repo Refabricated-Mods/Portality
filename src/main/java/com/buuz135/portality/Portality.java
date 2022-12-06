@@ -33,6 +33,7 @@ import com.buuz135.portality.block.module.CapabilityItemModuleBlock;
 import com.buuz135.portality.item.TeleportationTokenItem;
 import com.buuz135.portality.network.*;
 import com.buuz135.portality.proxy.CommonProxy;
+import com.buuz135.portality.proxy.PortalityConfig;
 import com.buuz135.portality.proxy.PortalitySoundHandler;
 import com.buuz135.portality.tile.BasicFrameTile;
 import com.buuz135.portality.tile.ControllerTile;
@@ -111,6 +112,7 @@ public class Portality extends ModuleController {
         NETWORK.registerMessage(PortalDisplayToggleMessage.class);
         NETWORK.registerMessage(PortalChangeColorMessage.class);
         UseBlockCallback.EVENT.register(Portality::onRightClick);
+        PortalityConfig.init();
         RewardGiver giver = RewardManager.get().getGiver(UUID.fromString("d28b7061-fb92-4064-90fb-7e02b95a72a6"), "Buuz135");
         try {
             giver.addReward(new Reward(new ResourceLocation(Portality.MOD_ID, "aura"), new URL("https://raw.githubusercontent.com/Buuz135/Industrial-Foregoing/master/contributors.json"), () -> dist -> {

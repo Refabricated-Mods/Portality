@@ -28,6 +28,6 @@ import com.buuz135.portality.proxy.PortalityConfig;
 public class BlockPosUtils {
 
     public static int getMaxDistance(int length) {
-        return length * PortalityConfig.DISTANCE_MULTIPLIER;
+        return length * PortalityConfig.INSTANCE.DISTANCE_MULTIPLIER;
     }
 }

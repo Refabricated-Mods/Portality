@@ -31,6 +31,7 @@ repositories {
     maven {
         url "https://maven.tterrag.com/"
     }
+    maven { url "https://maven.shedaniel.me/" }
     maven {
         url 'https://www.dogforce-games.com/maven/'
     }
@@ -69,7 +70,7 @@ dependencies {
     if (findProject(':titanium') != null) {
         implementation project(':titanium')
     } else {
-        modCompileOnly('com.hrznstudio:titanium:1.18.2-3.5.2-34')
+        modImplementation('com.github.Refabricated-Mods:Titanium:7fe3b34c25')
     }
     include modApi("teamreborn:energy:${project.tr_energy_version}") {
         exclude(group: "net.fabricmc.fabric-api")
@@ -79,7 +80,24 @@ dependencies {
         exclude(group: "net.fabricmc.fabric-api")
         exclude(group: "com.github.LlamaLad7")
     }
+    modApi("me.shedaniel.cloth:cloth-config-fabric:6.4.90") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modApi "me.shedaniel:RoughlyEnoughItems-fabric:8.3.576"
     //runtimeOnly fg.deobf("team.chisel.ctm:CTM:1.18-+")
+}
+
+processResources {
+    //dependsOn copyAccessWidener
+
+    def toReplace = [
+            "version"             : project.version
+    ]
+
+    inputs.properties toReplace
+    filesMatching("fabric.mod.json") {
+        expand toReplace
+    }
 }
 
 /*afterEvaluate {

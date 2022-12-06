@@ -92,7 +92,7 @@ public class TeleportHandler {
             destination = destination.subtract(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()).scale((entry.getValue().time += 0.05) / distance);
             if (destinationPos.closerThan(new Vec3i(entry.getKey().blockPosition().getX(), entry.getKey().blockPosition().getY(), entry.getKey().blockPosition().getZ()), 1.5)) {
                 if (!entry.getKey().level.isClientSide) {
-                    if (controller.getEnergyStorage().getAmount() >= PortalityConfig.TELEPORT_ENERGY_AMOUNT) {
+                    if (controller.getEnergyStorage().getAmount() >= PortalityConfig.INSTANCE.TELEPORT_ENERGY_AMOUNT) {
                         Level tpWorld = entry.getKey().level.getServer().getLevel(entry.getValue().data.getDimension());
                         Direction tpFacing = Direction.NORTH;
                         if (controller.getLinkData().isToken()){
@@ -104,7 +104,7 @@ public class TeleportHandler {
                         Entity entity = TeleportationUtils.teleportEntity(entry.getKey(), entry.getValue().data.getDimension(), pos.getX() + 0.5, pos.getY() + 2, pos.getZ() + 0.5, tpFacing.toYRot(), 0);
                         entitesTeleported.put(entity, new TeleportedEntityData(entry.getValue().data));
                         Transaction transaction = Transaction.openOuter();
-                        controller.getEnergyStorage().extract(PortalityConfig.TELEPORT_ENERGY_AMOUNT, transaction);
+                        controller.getEnergyStorage().extract(PortalityConfig.INSTANCE.TELEPORT_ENERGY_AMOUNT, transaction);
                         transaction.commit();
                         if (entry.getKey() instanceof ServerPlayer)
                             Portality.NETWORK.get().sendToClient(new PortalTeleportMessage(tpFacing.get3DDataValue(), controller.getLength()), ((ServerPlayer) entry.getKey()));
@@ -112,7 +112,7 @@ public class TeleportHandler {
                             return;
                         }
                     } else {
-                        if (entry.getKey() instanceof LivingEntity && PortalityConfig.HURT_PLAYERS) {
+                        if (entry.getKey() instanceof LivingEntity && PortalityConfig.INSTANCE.HURT_PLAYERS) {
                             ((LivingEntity) entry.getKey()).addEffect(new MobEffectInstance(MobEffects.WITHER, 5 * 20, 1));
                         }
                     }
@@ -139,7 +139,7 @@ public class TeleportHandler {
                 } else if (tpWorld.getBlockState(entry.getValue().data.getPos()).getBlock() instanceof ControllerBlock){
                     tpFacing = tpWorld.getBlockState(entry.getValue().data.getPos()).getValue(ControllerBlock.FACING_HORIZONTAL);
                 }
-                Vec3 vec3d = new Vec3(tpFacing.getNormal().getX(), tpFacing.getNormal().getY(), tpFacing.getNormal().getZ()).scale(2 * controller.getLength() / (double) PortalityConfig.MAX_PORTAL_LENGTH);
+                Vec3 vec3d = new Vec3(tpFacing.getNormal().getX(), tpFacing.getNormal().getY(), tpFacing.getNormal().getZ()).scale(2 * controller.getLength() / (double) PortalityConfig.INSTANCE.MAX_PORTAL_LENGTH);
                 entry.getKey().setDeltaMovement(vec3d.x, vec3d.y, vec3d.z);
                 entry.getKey().setYHeadRot(tpFacing.toYRot());
             }

@@ -171,7 +171,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
         }
         if (isActive() && linkData != null) {
             Transaction transaction = Transaction.openOuter();
-            this.getEnergyStorage().extract((linkData.isCaller() ? 2 : 1) * structureHandler.getLength() * PortalityConfig.POWER_PORTAL_TICK, transaction);
+            this.getEnergyStorage().extract((linkData.isCaller() ? 2 : 1) * structureHandler.getLength() * PortalityConfig.INSTANCE.POWER_PORTAL_TICK, transaction);
             transaction.commit();
             if (this.getEnergyStorage().getAmount() == 0 || !isFormed) {
                 closeLink();
@@ -381,7 +381,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
                     ((ControllerTile) entity).linkTo(new PortalLinkData(this.level.dimension(), this.worldPosition, false, this.getPortalDisplayName(), false), type);
                 }
             }
-            int power = PortalityConfig.PORTAL_POWER_OPEN_INTERDIMENSIONAL;
+            int power = PortalityConfig.INSTANCE.PORTAL_POWER_OPEN_INTERDIMENSIONAL;
             if (data.getDimension().location().equals(this.level.dimension().location())) {
                 power = (int) this.worldPosition.distSqr(data.getPos()) * structureHandler.getLength();
             }
@@ -497,7 +497,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
 
     @Override
     protected EnergyStorageComponent<ControllerTile> createEnergyStorage() {
-        return new EnergyStorageComponent<>(PortalityConfig.MAX_PORTAL_POWER, PortalityConfig.MAX_PORTAL_POWER_IN, 10, 20);
+        return new EnergyStorageComponent<>(PortalityConfig.INSTANCE.MAX_PORTAL_POWER, PortalityConfig.INSTANCE.MAX_PORTAL_POWER_IN, 10, 20);
     }
 
     @Environment(EnvType.CLIENT)
