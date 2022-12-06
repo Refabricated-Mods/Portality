@@ -70,7 +70,9 @@ dependencies {
     if (findProject(':titanium') != null) {
         implementation project(':titanium')
     } else {
-        modImplementation('com.github.Refabricated-Mods:Titanium:7fe3b34c25')
+        implementation('com.github.Refabricated-Mods:Titanium:bd6b3fb1ee'){
+            exclude(group: "net.faricmc")
+        }
     }
     include modApi("teamreborn:energy:${project.tr_energy_version}") {
         exclude(group: "net.fabricmc.fabric-api")
