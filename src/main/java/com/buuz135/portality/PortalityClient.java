@@ -34,6 +34,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -65,8 +66,8 @@ public class PortalityClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(CommonProxy.BLOCK_CAPABILITY_FLUID_MODULE.getLeft(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE.getLeft(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(CommonProxy.BLOCK_CAPABILITY_ITEM_MODULE.getLeft(), RenderType.cutout());
-        Minecraft.getInstance().getBlockColors().register((state, world, pos, index) -> {
-            if (index == 0 && world != null) {
+        ColorProviderRegistry.BLOCK.register((state, world, pos, index) -> {
+            if (index == 0 && world != null && pos != null) {
                 BlockEntity tileEntity = world.getBlockEntity(pos);
                 if (tileEntity instanceof IPortalColor) {
                     return ((IPortalColor) tileEntity).getColor();

@@ -70,22 +70,14 @@ dependencies {
     if (findProject(':titanium') != null) {
         implementation project(':titanium')
     } else {
-        implementation('com.github.Refabricated-Mods:Titanium:bd6b3fb1ee'){
+        modImplementation('com.github.Refabricated-Mods:Titanium:bd6b3fb1ee'){
             exclude(group: "net.fabricmc")
         }
     }
-    include modApi("teamreborn:energy:${project.tr_energy_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:9695183f48")) { transitive false }
-    modImplementation("io.github.fabricators_of_create:Porting-Lib:${rootProject.port_lib_version}-beta+1.18.2-stable"){
-        exclude(group: "net.fabricmc.fabric-api")
-        exclude(group: "com.github.LlamaLad7")
-    }
+    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:6be9acc47e"))
     modApi("me.shedaniel.cloth:cloth-config-fabric:6.4.90") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modApi "me.shedaniel:RoughlyEnoughItems-fabric:8.3.576"
     //runtimeOnly fg.deobf("team.chisel.ctm:CTM:1.18-+")
 }
 
