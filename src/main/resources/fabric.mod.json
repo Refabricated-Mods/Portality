@@ -11,7 +11,7 @@
   "contact": {
     "sources": "https://github.com/Refabricated-Mods/Portality/tree/1.18-fabric"
   },
-  "license": "LGPL-3.0-only",
+  "license": "MIT",
   "environment": "*",
   "accessWidener": "portality.accesswidener",
   "entrypoints": {
@@ -20,6 +20,9 @@
     ],
     "client": [
       "com.buuz135.portality.PortalityClient"
+    ],
+    "modmenu" : [
+      "com.buuz135.portality.proxy.client.ModMenuIntegration"
     ]
   },
   "depends": {
