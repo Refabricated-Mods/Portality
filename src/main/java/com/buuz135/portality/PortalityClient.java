@@ -67,7 +67,7 @@ public class PortalityClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(CommonProxy.BLOCK_INTERDIMENSIONAL_MODULE.getLeft(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(CommonProxy.BLOCK_CAPABILITY_ITEM_MODULE.getLeft(), RenderType.cutout());
         ColorProviderRegistry.BLOCK.register((state, world, pos, index) -> {
-            if (index == 0 && world != null && pos != null) {
+            if (index == 1 && world != null && pos != null) {
                 BlockEntity tileEntity = world.getBlockEntity(pos);
                 if (tileEntity instanceof IPortalColor) {
                     return ((IPortalColor) tileEntity).getColor();
