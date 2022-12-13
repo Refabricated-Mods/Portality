@@ -47,7 +47,7 @@ public class PortalityClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        BlockEntityRendererRegistry.register((BlockEntityType<ControllerTile>)CommonProxy.BLOCK_CONTROLLER.getRight(), TESRPortal::new);
+        //BlockEntityRendererRegistry.register((BlockEntityType<ControllerTile>)CommonProxy.BLOCK_CONTROLLER.getRight(), TESRPortal::new);
         EntityAddedLayerCallback.EVENT.register(((map, map1) -> {
             map1.forEach((s, entityRenderer) -> {
                 if (entityRenderer instanceof PlayerRenderer renderer){
@@ -56,8 +56,8 @@ public class PortalityClient implements ClientModInitializer {
             });
         }));
         TextureStitchCallback.PRE.register((textureAtlas, consumer) -> {
-            if (textureAtlas.equals(InventoryMenu.BLOCK_ATLAS)){
-                consumer.accept(TESRPortal.TEXTURE);
+            if (textureAtlas.location().equals(InventoryMenu.BLOCK_ATLAS)){
+                //consumer.accept(TESRPortal.TEXTURE);
             }
         });
         BlockRenderLayerMap.INSTANCE.putBlock(CommonProxy.BLOCK_CONTROLLER.getLeft(), RenderType.cutout());

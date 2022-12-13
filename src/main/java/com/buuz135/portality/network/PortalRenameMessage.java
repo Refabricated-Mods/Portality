@@ -46,8 +46,7 @@ public class PortalRenameMessage extends Message {
     @Override
     protected void handleClient(ServerPlayer sender) {
         Level world = sender.level;
-        if (world.getBlockEntity(tileLocation) != null && world.getBlockEntity(tileLocation) instanceof ControllerTile) {
-            ControllerTile controller = (ControllerTile) world.getBlockEntity(tileLocation);
+        if (world.getBlockEntity(tileLocation) != null && world.getBlockEntity(tileLocation) instanceof ControllerTile controller) {
             if (controller.getOwner().equals(sender.getUUID())) controller.setDisplayName(name);
         }
     }
