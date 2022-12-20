@@ -3,7 +3,7 @@ package com.buuz135.portality.item;
 import com.buuz135.portality.Portality;
 import com.buuz135.portality.tile.ControllerTile;
 import com.hrznstudio.titanium.item.BasicItem;
-import io.github.feltmc.feltapi.api.item.extensions.SneakBypassUseItem;
+import io.github.feltmc.feltapi.api.playeritem.SneakBypassUseItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

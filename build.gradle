@@ -73,11 +73,11 @@ dependencies {
     if (findProject(':titanium') != null) {
         implementation project(':titanium')
     } else {
-        modImplementation('com.github.Refabricated-Mods:Titanium:35bb291a7b'){
+        modImplementation('com.github.Refabricated-Mods:Titanium:665c6dd0d8'){
             exclude(group: "net.fabricmc")
         }
     }
-    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:038244ff5b"))
+    modImplementation(include("io.github.feltmc:felt-player-item-api:1.0.0"))
     modApi("me.shedaniel.cloth:cloth-config-fabric:6.4.90") {
         exclude(group: "net.fabricmc.fabric-api")
     }

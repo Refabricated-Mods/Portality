@@ -26,6 +26,7 @@ package com.buuz135.portality.tile;
 
 import com.buuz135.portality.proxy.CommonProxy;
 import com.hrznstudio.titanium.annotation.Save;
+import com.hrznstudio.titanium.api.client.IScreenAddon;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.block.tile.IEnergyTile;
 import com.hrznstudio.titanium.client.screen.addon.EnergyBarScreenAddon;
@@ -36,7 +37,6 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
@@ -59,7 +59,7 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> implements IE
     @Override
     public void initClient() {
         super.initClient();
-        this.addGuiAddonFactory(() -> new EnergyBarScreenAddon(10, 20, energyStorage));
+        this.addGuiAddonFactory(this::createScreen);
     }
 
     @Nonnull
@@ -95,5 +95,10 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> implements IE
     @Override
     public EnergyStorage getEnergyStorage(@Nullable Direction side) {
         return energyStorage;
+    }
+
+    @Environment(EnvType.CLIENT)
+    private IScreenAddon createScreen() {
+        return new EnergyBarScreenAddon(10, 20, energyStorage);
     }
 }

@@ -44,6 +44,7 @@ import com.buuz135.portality.proxy.PortalitySoundHandler;
 import com.buuz135.portality.proxy.client.IPortalColor;
 import com.buuz135.portality.proxy.client.TickeableSound;
 import com.buuz135.portality.util.BlockPosUtils;
+import com.buuz135.portality.util.ControllerSoundUtil;
 import com.hrznstudio.titanium.block.BasicTileBlock;
 import com.hrznstudio.titanium.block.tile.PoweredTile;
 import com.hrznstudio.titanium.client.screen.addon.StateButtonInfo;
@@ -93,9 +94,6 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
     private PortalLinkData linkData;
     private int color;
     private HashMap<String, CompoundTag> teleportationTokens;
-
-    @Environment(EnvType.CLIENT)
-    private TickeableSound sound;
 
     private TeleportHandler teleportHandler;
     private StructureHandler structureHandler;
@@ -205,6 +203,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void clientTick(Level level, BlockPos pos, BlockState state, ControllerTile blockEntity) {
         super.clientTick(level, pos, state, blockEntity);
@@ -228,9 +227,12 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
 
     @Environment(EnvType.CLIENT)
     private void tickSound() {
+        TickeableSound sound = ControllerSoundUtil.SOUND_MAP.get(this);
         if (isActive()) {
             if (sound == null) {
-                Minecraft.getInstance().getSoundManager().play(sound = new TickeableSound(this.level, this.worldPosition, PortalitySoundHandler.PORTAL));
+                sound = new TickeableSound(this.level, this.worldPosition, PortalitySoundHandler.PORTAL);
+                ControllerSoundUtil.SOUND_MAP.put(this, sound);
+                Minecraft.getInstance().getSoundManager().play(sound);
             } else {
                 sound.increase();
             }
@@ -239,7 +241,7 @@ public class ControllerTile extends PoweredTile<ControllerTile> implements IPort
                 sound.decrease();
             } else {
                 sound.setDone();
-                sound = null;
+                ControllerSoundUtil.SOUND_MAP.remove(this);
             }
         }
     }
