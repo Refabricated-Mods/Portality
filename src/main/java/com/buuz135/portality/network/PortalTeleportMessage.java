@@ -29,7 +29,6 @@ import com.hrznstudio.titanium.network.Message;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
 public class PortalTeleportMessage extends Message {
@@ -51,9 +50,9 @@ public class PortalTeleportMessage extends Message {
         Minecraft.getInstance().submitAsync(() -> {
             //Minecraft.getMinecraft().player.playSound(new SoundEvent(new ResourceLocation("entity.shulker.teleport")), 1, 1);
             Minecraft.getInstance().player.playSound(PortalitySoundHandler.PORTAL_TP, 0.1f, 1f);
-            if (PortalityConfig.INSTANCE.LAUNCH_PLAYERS) {
+            if (PortalityConfig.INSTANCE.launchPlayers) {
                 Direction facing = Direction.values()[this.facing];
-                Vec3 vector = new Vec3(facing.getNormal().getX(), facing.getNormal().getY(), facing.getNormal().getZ()).scale(2 * length / (double) PortalityConfig.INSTANCE.MAX_PORTAL_LENGTH);
+                Vec3 vector = new Vec3(facing.getNormal().getX(), facing.getNormal().getY(), facing.getNormal().getZ()).scale(2 * length / (double) PortalityConfig.INSTANCE.maxPortalLength);
                 LocalPlayer player = Minecraft.getInstance().player;
                 player.setDeltaMovement(vector.x, vector.y, vector.z);
             }

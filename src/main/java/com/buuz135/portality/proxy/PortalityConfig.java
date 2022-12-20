@@ -29,6 +29,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 @Config(name = Portality.MOD_ID)
 public class PortalityConfig implements ConfigData {
@@ -36,20 +37,35 @@ public class PortalityConfig implements ConfigData {
     @ConfigEntry.Gui.Excluded
     public static PortalityConfig INSTANCE;
 
-    public int TELEPORT_ENERGY_AMOUNT = 500;
-    public boolean HURT_PLAYERS = true;
-    public boolean LAUNCH_PLAYERS = true;
-    public int MAX_PORTAL_LENGTH = 16;
+    @Comment(value = "The amount of energy it will consume to teleport an entity")
+    public int teleportEnergyAmount = 500;
+    @Comment(value = "If true players will get the wither effect if there isn't enough power to teleport")
+    public boolean hurtPlayers = true;
+    @Comment(value = "If true players will be launched out of the portal instead of standing still in front of it")
+    public boolean launchPlayers = true;
+    @Comment(value = "How long the portal structure can be")
+    public int maxPortalLength = 16;
+    @Comment(value = "How wide a portal can be without counting the controller(radius)")
     @ConfigEntry.BoundedDiscrete(max = 100, min = 1)
-    public int MAX_PORTAL_WIDTH = 7;
+    public int maxPortalWidth = 7;
+    @Comment(value = "How tall a portal can be (diameter)")
     @ConfigEntry.BoundedDiscrete(max = 200, min = 3)
-    public int MAX_PORTAL_HEIGHT = 15;
-    public int MAX_PORTAL_POWER = 100000;
-    public int MAX_PORTAL_POWER_IN = 2000;
-    public int PORTAL_POWER_OPEN_INTERDIMENSIONAL = 10000;
+    public int maxPortalHeight = 15;
+    @Comment(value = "Portal energy buffer")
+    public int maxPortalPower = 100000;
+    @Comment(value = "Portal energy buffer insertion rate")
+    public int maxPortalPowerIn = 2000;
+    @Comment(value = "How much power it will consume to open the portal interdimensionally")
+    public int portalPowerOpenInterdimensional = 10000;
+    @Comment(value = """
+            
+            How much power it will consume/tick based on the portal length and if it is the caller. (portalLength*ThisValue).\r
+            If it is the portal that created the link the power will be double\
+            """)
     @ConfigEntry.BoundedDiscrete(max = 100, min = 1)
-    public int POWER_PORTAL_TICK = 1;
-    public int DISTANCE_MULTIPLIER = 200;
+    public int powerPortalTick = 1;
+    @Comment(value = "Max distance multiplier that a portal can be linked, based on length. PortalLength*ThisValue")
+    public int distanceMultiplier = 200;
 
 
     public static void init(){
