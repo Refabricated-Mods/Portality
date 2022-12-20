@@ -11,6 +11,7 @@
   "contact": {
     "sources": "https://github.com/Refabricated-Mods/Portality/tree/1.18-fabric"
   },
+  "icon": "assets/portality/icon.png",
   "license": "MIT",
   "environment": "*",
   "accessWidener": "portality.accesswidener",

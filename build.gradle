@@ -78,9 +78,6 @@ dependencies {
         }
     }
     modImplementation(include("io.github.feltmc:felt-player-item-api:1.0.0"))
-    modApi("me.shedaniel.cloth:cloth-config-fabric:6.4.90") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
     //modImplementation("curse.maven:continuity-531351:3927269")
     modImplementation("curse.maven:ctm-refabricated-633997:3834064")
     //runtimeOnly fg.deobf("team.chisel.ctm:CTM:1.18-+")
