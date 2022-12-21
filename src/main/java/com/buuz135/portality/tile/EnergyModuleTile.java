@@ -74,12 +74,15 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> implements IE
             for (Direction facing : Direction.values()) {
                 BlockPos checking = this.worldPosition.relative(facing);
                 EnergyStorage storage = EnergyStorage.SIDED.find(level, checking, facing.getOpposite());
-                Transaction transaction = Transaction.openOuter();
-                if (storage != null) {
-                    long energy = storage.insert(Math.min(this.energyStorage.getAmount(), 1000), transaction);
-                    if (energy > 0) {
-                        this.energyStorage.extract(energy, transaction);
-                        transaction.commit();
+                if (!Transaction.isOpen()) {
+                    Transaction transaction = Transaction.openOuter();
+                    if (storage != null) {
+                        long energy = storage.insert(Math.min(this.energyStorage.getAmount(), 1000), transaction);
+                        if (energy > 0) {
+                            this.energyStorage.extract(energy, transaction);
+                            transaction.commit();
+                            transaction.close();
+                        }
                     }
                 }
             }
