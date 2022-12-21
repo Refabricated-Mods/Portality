@@ -38,12 +38,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.EnergyStorage;
 
 import javax.annotation.Nonnull;
 
 
+@SuppressWarnings("UnstableApiUsage")
 public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> implements IEnergyTile {
 
     @Save
@@ -68,18 +70,21 @@ public class EnergyModuleTile extends ModuleTile<EnergyModuleTile> implements IE
     }
 
     @Override
-    public void serverTick(Level level, BlockPos pos, BlockState state, EnergyModuleTile blockEntity) {
+    public void serverTick(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull EnergyModuleTile blockEntity) {
         super.serverTick(level, pos, state, blockEntity);
         if (!isInput()) {
             for (Direction facing : Direction.values()) {
                 BlockPos checking = this.worldPosition.relative(facing);
                 EnergyStorage storage = EnergyStorage.SIDED.find(level, checking, facing.getOpposite());
-                Transaction transaction = Transaction.openOuter();
-                if (storage != null) {
-                    long energy = storage.insert(Math.min(this.energyStorage.getAmount(), 1000), transaction);
-                    if (energy > 0) {
-                        this.energyStorage.extract(energy, transaction);
-                        transaction.commit();
+                if (!Transaction.isOpen()) {
+                    Transaction transaction = Transaction.openOuter();
+                    if (storage != null) {
+                        long energy = storage.insert(Math.min(this.energyStorage.getAmount(), 1000), transaction);
+                        if (energy > 0) {
+                            this.energyStorage.extract(energy, transaction);
+                            transaction.commit();
+                            transaction.close();
+                        }
                     }
                 }
             }
