@@ -1,5 +1,5 @@
 {
-  "itemGroup.portality": "Portality",
+  "itemGroup.portality.main": "Portality",
   "block.portality.controller": "Portal Controller",
   "block.portality.frame": "Portal Frame",
   "block.portality.module_interdimensional": "Interdimensional Module",
