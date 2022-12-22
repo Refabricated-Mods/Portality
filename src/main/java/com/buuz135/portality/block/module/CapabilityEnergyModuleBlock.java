@@ -62,6 +62,7 @@ public class CapabilityEnergyModuleBlock extends CapabilityModuleBlock<EnergySto
                         transaction.commit();
                         return;
                     }
+                    transaction.abort();
                 }
             }
         }
