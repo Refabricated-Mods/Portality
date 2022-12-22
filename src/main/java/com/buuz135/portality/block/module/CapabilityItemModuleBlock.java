@@ -75,6 +75,7 @@ public class CapabilityItemModuleBlock extends CapabilityModuleBlock<Storage<Ite
                             }
                         }
                     }
+                    transaction.abort();
                 }
             }
         }

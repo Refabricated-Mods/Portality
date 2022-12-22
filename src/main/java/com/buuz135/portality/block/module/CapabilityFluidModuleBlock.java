@@ -75,6 +75,7 @@ public class CapabilityFluidModuleBlock extends CapabilityModuleBlock<Storage<Fl
                             }
                         }
                     }
+                    transaction.abort();
                 }
             }
         }
